@@ -4,15 +4,14 @@ function file_compress
 {
 	if [ -f $current_file ] 
 		then
-		gzip -k $1
+		gzip $1
 		move_to_trash	$1".gz"
 	elif	[ -d $current_file ]
 		then
-		cp -r $1 $1"_"
-		gzip -r $1"_"
-		tar -zcvf $1"_.gz" $1"_"
-		move_to_trash	$1"_.gz"
-		rm -r $1"_"
+		gzip -r $1
+		tar -zcvf $1".gz" $1
+		move_to_trash	$1".gz"
+		rm -r $1
 	fi
 }
 
@@ -25,20 +24,17 @@ function files_type
 {
 	for current_file in "$@"
 	do
-	
 	if  file "$current_file" | grep -q "archive" 
 		then
-		cp  $current_file $current_file"_"
-		move_to_trash $current_file"_"
+		move_to_trash $current_file
 	elif file "$current_file" | grep -q "compress"
 		then
-		cp  $current_file $current_file"_"
-		move_to_trash $current_file"_"
+		move_to_trash $current_file
 	else
 		file_compress $current_file
 	fi	
 	done
-	#clear
+	clear
 	echo $@ "Compressed and Moved to trash successfully"
 }
 
